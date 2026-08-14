@@ -1,6 +1,6 @@
 import  numpy as np, librerias as lib
 
-from Taller1.librerias import intercambiarFilas
+from Taller1.librerias import matrizFibonacci
 
 
 class TestLibrerias:
@@ -62,7 +62,9 @@ class TestLibrerias:
                            [7, 8, 9, 3],
                            [8, 3, 4, 7]])
 
-        assert np.array_equal(lib.transpuesta(matrix), np.transpose(matrix))
+        res = lib.transpuesta(matrix),
+        assert type(res) is np.ndarray
+        assert np.array_equal(res, np.transpose(matrix))
 
     def test_esSimetrica_da_verdadero_si_matriz_es_simetrica(self):
         matrix = np.array([[1,  2,  5],
@@ -87,7 +89,10 @@ class TestLibrerias:
                       [1],
                       [2]])
 
-        assert np.array_equal(lib.calcularAx(matrix, x), matrix @ x)
+        res = lib.calcularAx(matrix, x)
+
+        assert type(res) is  np.ndarray
+        assert np.array_equal(res, matrix @ x)
 
 
     def test_intercambiarFIlas_intercambia_2_filas_de_una_matriz(self):
@@ -145,4 +150,39 @@ class TestLibrerias:
                               [5, 2, 1, 9, 2],
                               [2, 5, 2, 1, 9]])
 
+        assert type(lib.matrizCirculante(v)) is  np.ndarray
         assert np.array_equal(lib.matrizCirculante(v), res_matrix)
+
+    def test_matrizVandermonde_devuelve_la_matriz_vandermonde_de_v(self):
+        v = np.array([2, 3, 5, 9])
+        res_matrix =np.array([[1,  1,   1,   1],
+                              [2,  3,   5,   9],
+                              [4,  9,  25,  81],
+                              [8, 27, 125, 729]])
+
+        assert type(lib.matrizCirculante(v)) is  np.ndarray
+        assert np.array_equal(lib.matrizVandermonde(v), res_matrix)
+
+    def test_numeroAureo_aproxima_el_numero_aureo_n_esimo(self):
+        # Casos base
+        assert lib.numeroAureo(0) == 0
+        assert lib.numeroAureo(1) == 1
+
+        # Casos chicos
+        assert lib.numeroAureo(4) == 5/3
+        assert lib.numeroAureo(7) == 21/13
+
+        # Casos grandes
+        assert lib.numeroAureo(20) == 10946/6765
+        assert lib.numeroAureo(50) == 20365011074 / 12586269025
+
+    def test_martizFibonacci_devuelve_una_matriz_de_los_resultados_de_fibonacci(self):
+        res = lib.matrizFibonacci(5)
+        res_esperado = np.array([[0, 1, 1,  2,  3],
+                                 [1, 1, 2,  3,  5],
+                                 [1, 2, 3,  5,  8],
+                                 [2, 3, 5,  8, 13],
+                                 [3, 5, 8, 13, 21]])
+
+        assert type(res) is np.ndarray
+        assert np.array_equal(res, res_esperado)

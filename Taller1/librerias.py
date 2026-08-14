@@ -107,3 +107,40 @@ def matrizCirculante(v: np.ndarray) -> np.ndarray:
             values = [last] + values
 
     return np.array(res)
+
+def matrizVandermonde(v: np.ndarray) -> np.ndarray:
+    n = len(v)
+    res = []
+
+    for i in range(n):
+        fila = v.copy()
+        for j in range(n):
+            fila[j] **= i
+        res.append(fila)
+
+    return np.array(res)
+
+def numeroAureo(n: int) -> float:
+    if n == 0: return 0
+
+    base = np.array([[1],
+                     [1]])
+
+    fk = np.array([[1,
+                       0]])
+
+    for _ in range(n):
+        fk[0][0], fk[0][1] = calcularAx(fk, base)[0][0], fk[0][0]
+
+    return float(fk[0][0] / fk[0][1])
+
+def matrizFibonacci(n: int) -> np.ndarray:
+    fib = [-1 for _ in range(2*n)]
+    fib[0] = 0
+    fib[1] = 1
+
+    for i in range(2, 2*n):
+        fib[i] = fib[i-1] + fib[i-2]
+
+    res = [[fib[i+j] for j in range(n)] for i in range(n)]
+    return np.array(res)
