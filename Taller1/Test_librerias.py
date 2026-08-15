@@ -1,8 +1,5 @@
 import  numpy as np, librerias as lib
 
-from Taller1.librerias import matrizFibonacci
-
-
 class TestLibrerias:
 
     def test_esCuadrada_da_true_para_matriz_cuadrada(self):
@@ -24,7 +21,7 @@ class TestLibrerias:
 
     def test_triangSup_devuelve_la_triangulacion_superior_de_una_matriz_sin_diagonal(self):
 
-        matrix = np.array([[1, 2, 3, 9],
+        matrix = np.array([[1, 6, 3, 9],
                            [4, 5, 6, 1],
                            [7, 8, 9, 3],
                            [8, 3, 4, 7]])
@@ -62,8 +59,8 @@ class TestLibrerias:
                            [7, 8, 9, 3],
                            [8, 3, 4, 7]])
 
-        res = lib.transpuesta(matrix),
-        assert type(res) is np.ndarray
+        res = lib.transpuesta(matrix)
+        assert isinstance(res, np.ndarray)
         assert np.array_equal(res, np.transpose(matrix))
 
     def test_esSimetrica_da_verdadero_si_matriz_es_simetrica(self):
@@ -176,6 +173,8 @@ class TestLibrerias:
         assert lib.numeroAureo(20) == 10946/6765
         assert lib.numeroAureo(50) == 20365011074 / 12586269025
 
+        #lib.show_graph(lib.numeroAureo, 0, 100, int)
+
     def test_martizFibonacci_devuelve_una_matriz_de_los_resultados_de_fibonacci(self):
         res = lib.matrizFibonacci(5)
         res_esperado = np.array([[0, 1, 1,  2,  3],
@@ -184,5 +183,53 @@ class TestLibrerias:
                                  [2, 3, 5,  8, 13],
                                  [3, 5, 8, 13, 21]])
 
-        assert type(res) is np.ndarray
+        assert isinstance(res, np.ndarray)
         assert np.array_equal(res, res_esperado)
+
+
+    def test_matrizHilbert_devuelve_la_matriz_hilbert_de_n(self):
+        res = lib.matrizHilbert(5)
+        res_esperado = np.array([[1.0, 1/2, 1/3, 1/4, 1/5],
+                                 [1/2, 1/3, 1/4, 1/5, 1/6],
+                                 [1/3, 1/4, 1/5, 1/6, 1/7],
+                                 [1/4, 1/5, 1/6, 1/7, 1/8],
+                                 [1/5, 1/6, 1/7, 1/8, 1/9]])
+
+
+        assert isinstance(res, np.ndarray)
+        assert np.allclose(res, res_esperado)
+
+    def test_calcular_polinomios1(self):
+        polinomio = np.array([-1, 1, -1, 1, -1, 1])
+        assert lib.calcular_polinomios(polinomio, 3) == 182
+
+        #lib.print_polinomio(polinomio)
+
+    def test_calcular_polinomios2(self):
+        polinomio = np.array([3, 0, 1])
+        assert lib.calcular_polinomios(polinomio, 3) == 12
+
+        #lib.print_polinomio(polinomio)
+
+    def test_calcular_polinomios3(self):
+        polinomio = np.array([-2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1])
+        assert lib.calcular_polinomios(polinomio, 4) == 1048574
+
+        #lib.print_polinomio(polinomio)
+
+
+    def test_row_echelon_con_pivoteo_evita_division_por_cero(self):
+        matrix = np.array([[0.0, 1.0, 1.0],
+                           [1.0, 2.0, 3.0],
+                           [2.0, 1.0, 4.0]])
+
+        res = lib.row_echelon(matrix)
+        res_esperado = np.array([[2.0, 1.0, 4.0],
+                                 [0.0, 1.5, 1.0],
+                                 [0.0, 0.0, 0.3333333]])
+
+        assert isinstance(res, np.ndarray)
+        assert np.allclose(res, res_esperado)
+
+        elementos_debajo_diagonal = np.tril(res, -1)
+        assert np.allclose(elementos_debajo_diagonal, 0.0)

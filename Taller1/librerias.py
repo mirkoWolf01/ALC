@@ -1,4 +1,7 @@
+from idlelib.search import find
+
 import numpy as np
+import matplotlib.pyplot as plt
 
 def esCuadrada(a: np.ndarray) -> bool:
     n = len(a)
@@ -7,8 +10,7 @@ def esCuadrada(a: np.ndarray) -> bool:
 ## Saca los que no cumplan la condicion
 def mfiltrar_excluyendo(a: np.ndarray, condicion) -> np.ndarray:
     (n, m) = a.shape
-
-    res = [[0 for _ in range(m)] for _ in range(n)]
+    res = np.zeros((n, m))
 
     for i in range(n):
         for j in range(m):
@@ -110,37 +112,78 @@ def matrizCirculante(v: np.ndarray) -> np.ndarray:
 
 def matrizVandermonde(v: np.ndarray) -> np.ndarray:
     n = len(v)
-    res = []
-
-    for i in range(n):
-        fila = v.copy()
-        for j in range(n):
-            fila[j] **= i
-        res.append(fila)
+    res = ([[1] * n, list(v)]
+           + [[v[i] ** j for i in range(n)] for j in range(2, n)])
 
     return np.array(res)
 
-def numeroAureo(n: int) -> float:
-    if n == 0: return 0
+def numeroAureo(n: int) -> np.float64:
+    if n == 0: return np.float64(0)
 
     base = np.array([[1],
-                     [1]])
+                     [1]], dtype=np.float64)
 
     fk = np.array([[1,
-                       0]])
+                    0]], dtype=np.float64)
 
     for _ in range(n):
         fk[0][0], fk[0][1] = calcularAx(fk, base)[0][0], fk[0][0]
 
-    return float(fk[0][0] / fk[0][1])
+    return np.float64(fk[0][0] / fk[0][1])
 
 def matrizFibonacci(n: int) -> np.ndarray:
-    fib = [-1 for _ in range(2*n)]
-    fib[0] = 0
-    fib[1] = 1
+    fib = [0, 1] + [0 for _ in range(2, 2*n)]
 
     for i in range(2, 2*n):
         fib[i] = fib[i-1] + fib[i-2]
 
     res = [[fib[i+j] for j in range(n)] for i in range(n)]
     return np.array(res)
+
+def matrizHilbert(n:int) -> np.ndarray:
+    res = [[np.divide(1, (i + j + 1)) for j in range(n)] for i in range(n)]
+
+    return np.array(res)
+
+def calcular_polinomios(polinomio: np.ndarray, value: int | float | np.float64) -> np.float64:
+    pot_values = np.array([[value ** i for i in range(len(polinomio))]])
+
+    polinomio_vert = transpuesta(np.array([polinomio]))
+    res = calcularAx(pot_values, polinomio_vert)
+
+    return np.float64(res[0])
+
+def print_polinomio(polinomio: np.ndarray):
+    show_graph(lambda x: calcular_polinomios(polinomio, x), -1, 1, np.float64)
+
+def show_graph(function, min_range: float, max_range: float, res_types) -> None:
+    x = np.linspace(min_range, max_range, num=200, dtype=res_types)
+    y = [function(val) for val in x]
+
+    plt.plot(x, y, color='red')
+    plt.grid(True)
+    plt.legend()
+
+    plt.show()
+
+def row_echelon(a: np.ndarray) -> np.ndarray:
+    n, m = a.shape
+    res = a.copy()
+
+    for  i in range(n):
+        resto_columna = res[i:, i]
+        indice_fila_mayor = int(i + np.argmax(resto_columna))
+
+        # Compruebo si existe un pivote mayor
+        if i != indice_fila_mayor:
+            intercambiarFilas(res, i, indice_fila_mayor)
+
+        pivot = res[i, i]
+
+        for  j in range(i+1, m):
+            factor  = res[j, i] / pivot
+
+            # La fila j entera - la fila i entera * el factor de multiplicacion
+            res[j, :] = res[j, :] - res[i, :] * factor
+
+    return res
