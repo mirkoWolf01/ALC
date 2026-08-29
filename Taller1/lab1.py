@@ -38,4 +38,4 @@ def esSimetrica(A: np.ndarray) -> bool:
     (n, m) = A.shape
     At = transpuesta(A)
 
-    return np.allclose(A, At)
+    return np.matricesIguales(A, At)
