@@ -1,51 +1,38 @@
 import numpy as np
 
-#region Taller1
-def error(x,y):
+# region Taller1
+def error(x, y):
     return abs(np.float64(x) - np.float64(y))
 
-def error_relativo(x,y):
+
+def error_relativo(x, y):
     if x == 0:
-        return y
+        return abs(y)
     if y == 0:
-        return x
+        return abs(x)
 
     return abs(np.float64(x) - np.float64(y)) / abs(np.float64(x))
 
-def matricesIguales(A, B) -> bool:
-    e = 1e-08
 
-    if A.shape != B.shape: return False
+def matricesIguales(A, B) -> bool:
+    e = 1e-07
+
+    if A.shape != B.shape:
+        return False
 
     for n in range(A.shape[0]):
         for m in range(A.shape[1]):
-            if error_relativo(A[n,m], B[n,m]) > e: return False
+            if error_relativo(A[n, m], B[n, m]) > e:
+                return False
 
     return True
+# endregion
 
-def transpuesta(a: np.ndarray) -> np.ndarray:
-    (n, m) = a.shape
-
-    res = []
-    for j in range(m):
-        nueva_fila = []
-        for i in range(n):
-            nueva_fila.append(a[i][j])
-        res.append(nueva_fila)
-
-    return np.array(res)
-
-def esSimetrica(A: np.ndarray) -> bool:
-    (n, m) = A.shape
-    At = transpuesta(A)
-
-    return matricesIguales(A, At)
-#endregion
-
-#region Taller2
+# region Taller2
 def rota(theta):
     return np.array([[np.cos(theta), -np.sin(theta)],
                      [np.sin(theta), np.cos(theta)]])
+
 
 def escala(s):
     n = len(s)
@@ -57,6 +44,7 @@ def escala(s):
 
     return res
 
+
 def rota_y_escala(theta, s):
     r_matrix = rota(theta)
     s_matrix = escala(s)
@@ -66,17 +54,18 @@ def rota_y_escala(theta, s):
     return mmult(s_matrix, r_matrix)
 
 
-def afin(theta, s ,b):
+def afin(theta, s, b):
     rs_matrix = rota_y_escala(theta, s)
 
-    res = np.zeros((3,3))
+    res = np.zeros((3, 3))
     res[0:2, 0:2] = rs_matrix
     res[:2, 2] = b
     res[2, 2] = 1
 
     return res
 
-def trans_afin(v, theta, s ,b):
+
+def trans_afin(v, theta, s, b):
     af_matrix = afin(theta, s, b)
     nv = np.ones((3, 1))
     nv[:2, 0] = v
@@ -97,5 +86,4 @@ def mmult(a: np.ndarray, b: np.ndarray):
                 res[i, j] += a[i, k] * b[k, j]
 
     return res
-
-#endregion
+# endregion
