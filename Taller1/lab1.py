@@ -12,7 +12,7 @@ def error_relativo(x,y):
     return abs(np.float64(x) - np.float64(y)) / abs(np.float64(x))
 
 def matricesIguales(A, B) -> bool:
-    e = 1e-08
+    e = 1e-07
 
     if A.shape != B.shape: return False
 
@@ -35,7 +35,6 @@ def transpuesta(a: np.ndarray) -> np.ndarray:
     return np.array(res)
 
 def esSimetrica(A: np.ndarray) -> bool:
-    (n, m) = A.shape
     At = transpuesta(A)
 
     return matricesIguales(A, At)
