@@ -1,4 +1,4 @@
-import  numpy as np, librerias as lib
+import  numpy as np, lab0 as lib
 
 class TestLibrerias:
 

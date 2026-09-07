@@ -29,24 +29,20 @@ def normaliza(X, p):
 def normaMatMC(A, q, p, Np):
     _, m = A.shape
 
-    max_val = 0
-    max_vec = None
+    max_val, max_vec = 0, None
     
     for _ in range(Np):
         v = np.random.uniform(-5,5, m)
         norm = norma(v, p)
         if norm == 0: continue
 
-        # v_normalizado en formato columna, y mult_res en 1D.
-        v_normalizado = (v / norm).reshape(m, 1)
-        mult_res = (A @ np.array(v_normalizado)).reshape(-1)
-
+        v_normalizado = v / norm
+        mult_res = A @ v_normalizado
         val_candidato = norma(mult_res, q)
 
         if val_candidato >= max_val: 
             max_val = val_candidato
             max_vec = v_normalizado
-
 
     return [max_val, max_vec]
 
@@ -76,13 +72,14 @@ def normaExacta(A, p=[1, 'inf']):
 def condMC(A, p, Np):
     Ainv = np.linalg.inv(A)
 
-    A_norma_inducida = normaMatMC(A,p,p, Np)[0]
-    Ainv_norma_inducida = normaMatMC(Ainv,p,p, Np)[0]
+    # Recordar que devuelve un par [val, vector]
+    A_norma_inducida = normaMatMC(A,p,p, Np)
+    Ainv_norma_inducida = normaMatMC(Ainv,p,p, Np)
 
     if A_norma_inducida[1] is None or Ainv_norma_inducida[1] is None: 
         return -1
 
-    return A_norma_inducida * Ainv_norma_inducida
+    return A_norma_inducida[0] * Ainv_norma_inducida[0]
     
 # Calculo usando la norma exacta
 def condExacto(A, p):
