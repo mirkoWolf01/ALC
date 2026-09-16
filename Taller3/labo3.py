@@ -16,12 +16,12 @@ def norma(x, p):
     return res ** (1/p)
 
 def normaliza(X, p):
-	v = [e.copy().astype(np.float64) for e in X]
-	for e in v:
-		n = norma(e, p)
-		for i in range(len(e)):
-			e[i] = e[i] / n
-	return v
+    v = [e.copy().astype(np.float64) for e in X]
+    for e in v:
+        n = norma(e, p)
+        for i in range(len(e)):
+            e[i] = e[i] / n
+    return v
             
 
 def normaMatMC(A, q, p, Np):

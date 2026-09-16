@@ -33,7 +33,10 @@ def traza(a: np.ndarray) -> int:
 
     return res
 
-def transpuesta(a: np.ndarray) -> np.ndarray:
+def transpose(a: np.ndarray) -> np.ndarray:
+    if a.ndim == 1:
+        a = a.reshape(-1, 1)
+
     (n, m) = a.shape
 
     res = []
@@ -47,7 +50,7 @@ def transpuesta(a: np.ndarray) -> np.ndarray:
 
 def esSimetrica(a: np.ndarray) -> bool:
     (n, m) = a.shape
-    at = transpuesta(a)
+    at = transpose(a)
 
     for i in range(n):
         for j in range(m):

@@ -1,4 +1,5 @@
 import numpy as np
+from alc import transpose
 
 def norma(x, p):
     if p == 'inf':
@@ -40,7 +41,7 @@ def QR_con_GS(A, tol=1e-12, retorna_nops=False):
     if n != m:
         return None
 
-    At = A.copy().T
+    At = transpose(A.copy())
 
     Q = np.zeros((n, n))
     R = np.zeros((n, n))
@@ -54,7 +55,8 @@ def QR_con_GS(A, tol=1e-12, retorna_nops=False):
         Q[j] = At[j]
 
         for k in range(j):
-            R[k][j] = Q[k].T @ Q[j]
+            Qt = transpose(Q[k])
+            R[k][j] = Qt @ Q[j]
             Q[j] = Q[j] - R[k][j] * Q[k]
 
         nq_j = norma(Q[j], 2)
@@ -66,7 +68,7 @@ def QR_con_GS(A, tol=1e-12, retorna_nops=False):
     if retorna_nops:
         return Q, R, 0
 
-    return Q.T, R
+    return transpose(Q), R
 
 
 def signo(i):
@@ -100,13 +102,13 @@ def QR_con_HH(A, tol=1e-12, extras=False):
         if n_u > tol:
             u = u / n_u
 
-            H = np.eye(m-k) - 2*mmult(u, u.T)
+            H = np.eye(m-k) - 2*mmult(u, transpose(u))
 
             Hp = np.eye(m)
             Hp[k:m, k:m] = H
 
             R = Hp @ R
-            Q = Q @ Hp.T
+            Q = Q @ transpose(Hp)
 
     if extras:
         return Q, R, extra_info
