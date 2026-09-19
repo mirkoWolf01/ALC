@@ -66,6 +66,16 @@ def calcularAx(a: np.ndarray, x: np.ndarray) -> np.ndarray:
 
     return mmult(a, x)
 
+def dotm(A, B):
+    n = len(A)
+    assert n == len(B)
+
+    res = 0
+    for i in range(n):
+        res += A[i] * B[i]
+
+    return res
+
 def mmult(a: np.ndarray, b: np.ndarray):
     if a.ndim == 1:
         a = a.reshape(-1, 1)
@@ -85,6 +95,37 @@ def mmult(a: np.ndarray, b: np.ndarray):
 
     return res
 
+def intercambiarFilas(a: np.ndarray, i: int , j: int):
+    assert i < len(a) and j < len(a)
+    a[i], a[j] = a[j].copy(), a[i].copy()
+
+def sumar_fila_multiplo(a: np.ndarray, i: int, j: int, s):
+    assert i < len(a) and j < len(a)
+    a[j] += a[i] * s
+
+# labo1
+
+def error(x,y):
+    return abs(np.float64(x) - np.float64(y))
+
+def error_relativo(x,y):
+    if x == 0:
+        return y
+    if y == 0:
+        return x
+
+    return abs(np.float64(x) - np.float64(y)) / abs(np.float64(x))
+
+def matricesIguales(A, B,  e = 1e-07) -> bool:
+    if A.shape != B.shape: return False
+
+    for n in range(A.shape[0]):
+        for m in range(A.shape[1]):
+            if error_relativo(A[n,m], B[n,m]) > e: return False
+
+    return True
+
+# labo2
 
 def rota(theta):
     return np.array([[np.cos(theta), -np.sin(theta)],
@@ -125,3 +166,38 @@ def trans_afin(v, theta, s ,b):
     nv[:2, 0] = v
 
     return mmult(af_matrix, nv)[:2, 0]
+
+# labo4
+
+def elim_gaussiana(A):
+    if A is None:
+        return None, None, 0
+
+    cant_op = 0
+    n, m = A.shape
+
+    if m != n:
+        print('Matriz no cuadrada')
+        return None, None, 0
+
+    L = np.eye(n)
+    U = A.copy().astype(np.float64)
+
+    for i in range(n - 1):
+        col = []
+
+        if U[i][i] == 0:
+            print(f"Error: Null pivot at ({i}:{i})")
+            return None, None, 0
+
+        for j in range(i + 1, n):
+            factor: np.float64 = - U[j][i] / U[i][i]
+
+            sumar_fila_multiplo(U, i, j, factor)
+            col.append(-factor)
+
+            cant_op += 1 + 2 * (n - i - 1)
+
+        L[i + 1:n, i] = col
+
+    return L, U, cant_op

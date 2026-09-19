@@ -50,7 +50,7 @@ def normaExacta(A, p=[1, 'inf']):
 
     if p != 1 and p != 'inf': return None
 
-    if(p == 1):
+    if p == 1:
         for j in range(n):
             tot = 0
             for i in range(n):
@@ -85,6 +85,9 @@ def condExacto(A, p):
 
     A_norma_exacta = normaExacta(A,p)
     Ainv_norma_exacta = normaExacta(Ainv, p)
+
+    if A_norma_exacta is None or Ainv_norma_exacta is None:
+        return -1
 
     return A_norma_exacta * Ainv_norma_exacta
 

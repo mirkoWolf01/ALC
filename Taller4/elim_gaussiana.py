@@ -1,26 +1,37 @@
 import numpy as np
+from alc import sumar_fila_multiplo
 
 def elim_gaussiana(A):
+    if A is None:
+        return None, None, 0
+
     cant_op = 0
-    m=A.shape[0]
-    n=A.shape[1]
-    Ac = A.copy()
-    
-    if m!=n:
+    n, m = A.shape
+
+    if m != n:
         print('Matriz no cuadrada')
-        return
-    
-    ## desde aqui -- CODIGO A COMPLETAR
+        return None, None, 0
 
+    L = np.eye(n)
+    U = A.copy().astype(np.float64)
 
+    for i in range(n - 1):
+        col = []
 
+        if U[i][i] == 0:
+            print(f"Error: Null pivot at ({i}:{i})")
+            return None, None, 0
 
+        for j in range(i + 1, n):
+            factor: np.float64 = - U[j][i] / U[i][i]
 
-                
-    ## hasta aqui, calculando L, U y la cantidad de operaciones sobre 
-    ## la matriz Ac
-            
-    
+            sumar_fila_multiplo(U, i, j, factor)
+            col.append(-factor)
+
+            cant_op += 1 + 2 * (n - i - 1)
+
+        L[i + 1:n, i] = col
+
     return L, U, cant_op
 
 
