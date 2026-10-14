@@ -1,5 +1,3 @@
-import numpy as np
-
 from alc import *
 
 def calculaLU(A):
