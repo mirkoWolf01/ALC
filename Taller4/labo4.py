@@ -67,7 +67,7 @@ def esSDP(A, atol= 1e-8):
         return False
 
     for j in range(len(D)):
-        if D[j][j] > 0: continue
+        if D[j][j] > atol: continue
         return False
 
     return True

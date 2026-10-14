@@ -167,4 +167,3 @@ assert(esSDP(A,1e-3))
 
 print("-----ÉXITO!!!!\n")
 print("---FINALIZADO LABO 4!---")
-
