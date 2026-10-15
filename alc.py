@@ -35,7 +35,9 @@ def traza(a: np.ndarray) -> int:
     return res
 
 def transpose(a: np.ndarray) -> np.ndarray:
-    if a.ndim == 1:
+    if len(a) == 0:
+        return np.array([])
+    elif a.ndim == 1:
         a = a.reshape(-1, 1)
 
     (n, m) = a.shape
@@ -68,8 +70,8 @@ def calcularAx(a: np.ndarray, x: np.ndarray) -> np.ndarray:
 
 # Calcula el producto interno entre dos vectores
 def dotm(v, w) -> float:
-    v = v[:, 0] if v.ndim > 1 else v
-    w = w[:, 0] if w.ndim > 1 else w
+    v = flat(v) if v.ndim > 1 else v
+    w = flat(w) if w.ndim > 1 else w
 
     n = len(v)
     assert n == len(w)
@@ -96,6 +98,9 @@ def mmult(a: np.ndarray, b: np.ndarray):
                 res[i, j] += a[i, k] * b[k, j]
 
     return res
+
+def flat(v: np.ndarray) -> np.ndarray:
+    return v[:, 0]
 
 def intercambiarFilas(a: np.ndarray, i: int , j: int):
     assert i < len(a) and j < len(a)
@@ -306,3 +311,76 @@ def elim_gaussiana(A):
         L[i + 1:n, i] = col
 
     return L, U, cant_op
+
+#region labo6
+def mult_and_normalize(A:np.ndarray, v:np.ndarray) -> np.ndarray:
+    w = calcularAx(A, v)
+    return normalize_vector(w, 2)
+
+# TODO: Falta que devuelva ops en vez de 0.
+def metpot2k(A, tol= 1e-15, K = 1000):
+    n, m = A.shape
+
+    initial_random_v = np.array(np.random.uniform(-1.0, 1.0, n))
+
+    v = normalize_vector(initial_random_v, 2)
+    vp = mult_and_normalize(A, mult_and_normalize(A, v))
+
+    e = dotm(v, vp)
+
+    k, nops = 0, 0
+    while abs(e - 1.0) > tol and k < K:
+        v = vp
+        vp = mult_and_normalize(A, mult_and_normalize(A, v))
+        e = dotm(v, vp)
+
+        k = k + 1
+
+    # En vez de poner transpose(vp), uso el producto interno.
+    l = dotm(vp, mmult(A, vp))
+    return vp, l, 0
+
+def buildHH(v, size: int, tol=  1e-15):
+    I = np.eye(size,size)
+    e1 = np.zeros(size)
+    e1[0] = 1.0
+
+    v = v[:, 0] if v.ndim > 1 else v
+    vtemp = np.array(e1) - v
+    norma_tmp = norma(vtemp,2)
+
+    if norma_tmp < tol: return I
+
+    column = vtemp.reshape(-1, 1)
+    row = vtemp.reshape(1, -1)
+
+    return I - 2 * mmult(column, row) * (norma_tmp**-2)
+
+
+# Devuelve S, D tal que A =  S@D@S^t
+def diagRH(A, tol= 1e-15, K = 1000):
+    n = len(A)
+
+    v1, l1, _ = metpot2k(A, tol, K)
+    H_v1 = buildHH(v1, n, tol)
+
+    S, D = np.zeros((n,n)), np.zeros((n,n))
+    if n == 2:
+        S = H_v1
+        D = mmult(H_v1, mmult(A, transpose(H_v1)))
+    else:
+        B = mmult(H_v1, mmult(A, transpose(H_v1)))
+        Ap = B[1:n, 1:n]
+
+        Sp, Dp = diagRH(Ap, tol, K)
+
+        D[0, 0] = l1
+        D[1:n, 1:n] = Dp
+
+        S[0, 0] = 1
+        S[1:n, 1:n] = Sp
+
+        S = mmult(H_v1, S)
+
+    return S, D
+#endregion

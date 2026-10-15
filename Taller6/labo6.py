@@ -32,7 +32,7 @@ def buildHH(v, size: int, tol=  1e-15):
     e1 = np.zeros(size)
     e1[0] = 1.0
 
-    v = v[:, 0] if v.ndim > 1 else v
+    v = flat(v) if v.ndim > 1 else v
     vtemp = np.array(e1) - v
     norma_tmp = norma(vtemp,2)
 
